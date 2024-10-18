@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estacionamento</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="registro.html">Registrar</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="vagas.html">Vagas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Bem-vindo ao Sistema de Estacionamento</h1>
+            <p>Gerencie suas vagas e veículos de forma fácil e rápida.</p>
+        </section>
+
+        <section class="vagas-disponiveis">
+            <h2>Vagas Disponíveis</h2>
+            <table>
+                <tr>
+                    <th>Vaga</th>
+                    <th>Status</th>
+                    <th>Proprietário</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Disponível</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Ocupada</td>
+                    <td>joao@example.com</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Disponível</td>
+                    <td>N/A</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="registrar-veiculo">
+            <h2>Registrar Veículo</h2>
+            <form action="db.php" method="POST">
+                <input type="text" name="placa" placeholder="Placa" required>
+                <input type="text" name="marca" placeholder="Marca" required>
+                <input type="text" name="cor" placeholder="Cor" required>
+                <button type="submit">Registrar Veículo</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Sistema de Estacionamento. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
