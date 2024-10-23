@@ -2,10 +2,7 @@
 session_start(); // Inicia a sessão
 
 // Verifica se o usuário já está logado
-if (isset($_SESSION['usuario_id'])) {
-    header("Location: perfil.html"); // Redireciona para a tela de perfil se já estiver logado
-    exit;
-}
+
 
 include 'db.php'; 
 
