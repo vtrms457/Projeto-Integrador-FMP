@@ -1,0 +1,10 @@
+CREATE DATABASE plus_vagas;
+
+USE plus_vagas;
+
+CREATE TABLE usuarios (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    tipo_usuario ENUM('comum', 'admin') NOT NULL
+);
