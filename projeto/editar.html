@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil</title>
+    <link rel="stylesheet" href="style01.css"> 
+</head>
+<body>
+    <h2>Editar Perfil</h2>
+    <form action="editar_perfil.php" method="POST" enctype="multipart/form-data">
+        <label for="telefone">Telefone:</label>
+        <input type="text" name="telefone" id="telefone" required>
+
+        <label for="foto_perfil">Foto de Perfil:</label>
+        <input type="file" name="foto_perfil" id="foto_perfil" accept="image/*" required>
+
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</body>
+</html>
