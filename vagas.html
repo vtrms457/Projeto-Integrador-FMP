@@ -25,26 +25,16 @@
             <h2>Mapa de Vagas</h2>
             <p>Aqui você poderá visualizar o mapeamento das vagas disponíveis.</p>
             <table>
-                <tr>
-                    <th>Vaga</th>
-                    <th>Status</th>
-                    <th>Proprietário</th>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Disponível</td>
-                    <td>N/A</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Ocupada</td>
-                    <td>joao@example.com</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Disponível</td>
-                    <td>N/A</td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Vaga</th>
+                        <th>Status</th>
+                        <th>Proprietário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Conteúdo será inserido dinamicamente -->
+                </tbody>
             </table>
         </section>
     </main>
@@ -52,5 +42,34 @@
     <footer>
         <p>© 2024 Sistema de Estacionamento. Todos os direitos reservados.</p>
     </footer>
+
+    <script>
+        // Função para atualizar as vagas
+        function atualizarVagas() {
+            fetch('atualizar_vagas.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector(".vagas table tbody");
+                    tableBody.innerHTML = ""; // Limpa a tabela antes de atualizar
+
+                    data.forEach(vaga => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${vaga.id}</td>
+                            <td>${vaga.status === 'disponivel' ? 'Disponível' : 'Ocupada'}</td>
+                            <td>${vaga.proprietario || 'N/A'}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Erro ao atualizar vagas:", error));
+        }
+
+        // Atualizar as vagas a cada 5 segundos
+        setInterval(atualizarVagas, 5000);
+        
+        // Carregar as vagas quando a página for carregada
+        atualizarVagas();
+    </script>
 </body>
 </html>

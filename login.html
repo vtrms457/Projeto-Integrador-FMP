@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,24 +12,21 @@
     <header>
         <nav>
             <ul>
-                <li><a href="index.html">Início</a></li>
                 <li><a href="login.html">Login</a></li>
                 <li><a href="registro.html">Criar Conta</a></li>
-                <li><a href="perfil.html">Perfil</a></li>
-                <li><a href="vagas.html">Vagas</a></li>
-                <li><a href="admin.html">Administração</a></li>
-            </ul>
+                
         </nav>
     </header>
 
     <main>
         <section class="login">
             <h2>Login</h2>
-            <form action="login_process.php" method="POST">
+            <form action="processo_login.php" method="POST">
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="password" name="senha" placeholder="Senha" required>
                 <button type="submit">Entrar</button>
             </form>
+            <p>Ainda não tem uma conta? <a href="registro.html">Clique aqui para criar uma!</a></p> <!-- Link para registro -->
         </section>
     </main>
 
