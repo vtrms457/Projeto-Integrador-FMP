@@ -28,6 +28,7 @@
 
         <section class="vagas-disponiveis">
             <h2>Vagas Disponíveis</h2>
+            <button onclick="atualizarVagas()">Atualizar Vagas</button>
             <table>
                 <tr>
                     <th>Vaga</th>
@@ -66,5 +67,35 @@
     <footer>
         <p>© 2024 Sistema de Estacionamento. Todos os direitos reservados.</p>
     </footer>
+
+    <script>
+        function atualizarVagas() {
+            // Exemplo de dados estáticos para simplificação
+            const vagas = [
+                { id: 1, status: 'Disponível', proprietario: 'N/A' },
+                { id: 2, status: 'Ocupada', proprietario: 'joao@example.com' },
+                { id: 3, status: 'Disponível', proprietario: 'N/A' }
+            ];
+
+            const tabela = document.querySelector(".vagas-disponiveis table");
+            tabela.innerHTML = `
+                <tr>
+                    <th>Vaga</th>
+                    <th>Status</th>
+                    <th>Proprietário</th>
+                </tr>
+            `;
+            vagas.forEach(vaga => {
+                const row = `
+                    <tr>
+                        <td>${vaga.id}</td>
+                        <td>${vaga.status}</td>
+                        <td>${vaga.proprietario}</td>
+                    </tr>
+                `;
+                tabela.innerHTML += row;
+            });
+        }
+    </script>
 </body>
 </html>
