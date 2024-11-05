@@ -13,35 +13,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $senha = $_POST['senha'];
 
+    // Verifica se o email e a senha não estão vazios
+    if (empty($email) || empty($senha)) {
+        echo "Por favor, preencha todos os campos!";
+        exit;
+    }
+
     // Conexão com o banco de dados
-    $servername = "localhost"; // Altere para o seu servidor
-    $username = "root"; // Altere para o seu usuário do banco de dados
-    $password = ""; // Altere para a sua senha do banco de dados
-    $dbname = "projeto"; // Nome do seu banco de dados
+    $servername = "localhost"; // Servidor do banco de dados
+    $username = "root"; // Usuário do banco de dados
+    $password = ""; // Senha do banco de dados
+    $dbname = "projeto"; // Nome do banco de dados
 
     // Cria a conexão
     $conn = new mysqli($servername, $username, $password, $dbname);
 
-    // Verifica a conexão
+    // Verifica a conexão com o banco de dados
     if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+        die("Erro de conexão: " . $conn->connect_error);
     }
 
     // Prepara a consulta SQL para evitar SQL Injection
-    $stmt = $conn->prepare("SELECT id, senha FROM usuarios WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id, senha, tipo FROM usuarios WHERE email = ?");
+    if (!$stmt) {
+        die('Erro ao preparar a consulta: ' . $conn->error); // Se houver erro ao preparar a consulta
+    }
+
+    // Bind dos parâmetros
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $stmt->store_result();
 
-    // Verifica se o email existe
+    // Verifica se o email existe no banco de dados
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($usuario_id, $senha_hash);
+        // Vincula os resultados
+        $stmt->bind_result($usuario_id, $senha_hash, $tipo_usuario);
         $stmt->fetch();
 
-        // Verifica a senha
+        // Verifica a senha usando password_verify
         if (password_verify($senha, $senha_hash)) {
             // A senha está correta, inicia a sessão
             $_SESSION['usuario_id'] = $usuario_id;
+            $_SESSION['tipo_usuario'] = $tipo_usuario; // Armazena o tipo do usuário (aluno ou administrador)
             header("Location: perfil.html"); // Redireciona para a tela de perfil após login
             exit;
         } else {
