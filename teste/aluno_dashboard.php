@@ -8,38 +8,41 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'aluno') {
     exit;
 }
 
-// Reservar uma vaga
-if (isset($_POST['reservar_vaga'])) {
-    $vaga_id = intval($_POST['vaga_id']);
-    $usuario_id = $_SESSION['usuario_id'];
+// Verifica se o usuário já tem uma reserva
+$usuario_id = $_SESSION['usuario_id'];
+$sql_check_reserva = "SELECT * FROM reservas WHERE usuario_id = ? AND status = 'reservado'";
+$stmt_check_reserva = $conn->prepare($sql_check_reserva);
+$stmt_check_reserva->bind_param("i", $usuario_id);
+$stmt_check_reserva->execute();
+$result_check_reserva = $stmt_check_reserva->get_result();
 
-    $stmt = $conn->prepare("UPDATE vagas SET status = 'ocupada', usuario_id = ? WHERE id = ? AND status = 'disponivel'");
-    $stmt->bind_param("ii", $usuario_id, $vaga_id);
-    if ($stmt->execute()) {
-        echo "<script>alert('Vaga reservada com sucesso!');</script>";
-    } else {
-        echo "<script>alert('Erro ao reservar a vaga.');</script>";
+if ($result_check_reserva->num_rows > 0) {
+    echo "<script>alert('Você já tem uma vaga reservada.');</script>";
+} else {
+    // Reservar uma vaga
+    if (isset($_POST['reservar_vaga'])) {
+        $vaga_id = intval($_POST['vaga_id']);
+        
+        // Verifica se a vaga está disponível
+        $stmt = $conn->prepare("UPDATE vagas SET status = 'ocupada', veiculo_id = ? WHERE id = ? AND status = 'disponivel'");
+        $stmt->bind_param("ii", $usuario_id, $vaga_id);
+        
+        if ($stmt->execute()) {
+            // Registra a reserva na tabela reservas
+            $stmt_reserva = $conn->prepare("INSERT INTO reservas (usuario_id, vaga_id, status) VALUES (?, ?, 'reservado')");
+            $stmt_reserva->bind_param("ii", $usuario_id, $vaga_id);
+            $stmt_reserva->execute();
+            
+            echo "<script>alert('Vaga reservada com sucesso!');</script>";
+        } else {
+            echo "<script>alert('Erro ao reservar a vaga.');</script>";
+        }
+        
+        $stmt->close();
     }
-    $stmt->close();
 }
 
-// Cadastrar veículo
-if (isset($_POST['cadastrar_veiculo'])) {
-    $placa = $_POST['placa'];
-    $marca = $_POST['marca'];
-    $cor = $_POST['cor'];
-    $tipo = $_POST['tipo'];
-    $usuario_id = $_SESSION['usuario_id'];
-
-    $stmt = $conn->prepare("INSERT INTO veiculos (usuario_id, placa, marca, cor, tipo) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $usuario_id, $placa, $marca, $cor, $tipo);
-    if ($stmt->execute()) {
-        echo "<script>alert('Veículo cadastrado com sucesso!');</script>";
-    } else {
-        echo "<script>alert('Erro ao cadastrar o veículo.');</script>";
-    }
-    $stmt->close();
-}
+$stmt_check_reserva->close();
 
 // Consulta para obter as vagas
 $sql = "SELECT id, numero, status FROM vagas";
