@@ -2,7 +2,6 @@
 session_start();
 require_once 'db.php';
 
-// Verifica se o usuário está logado e é um administrador
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'administrador') {
     header("Location: login.php");
     exit;
@@ -11,34 +10,46 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'administra
 // Função para liberar vaga
 if (isset($_GET['liberar_vaga'])) {
     $vaga_id = intval($_GET['liberar_vaga']);
-    $stmt = $conn->prepare("UPDATE vagas SET status = 'disponivel', usuario_id = NULL WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE vagas SET status = 'disponivel', veiculo_id = NULL WHERE id = ?");
     $stmt->bind_param("i", $vaga_id);
     $stmt->execute();
     $stmt->close();
 }
 
-// Adicionar uma nova vaga
-if (isset($_POST['add_vaga'])) {
-    $numero_vaga = intval($_POST['numero_vaga']);
-    $stmt = $conn->prepare("INSERT INTO vagas (numero, status) VALUES (?, 'disponivel')");
-    $stmt->bind_param("i", $numero_vaga);
-    $stmt->execute();
-    $stmt->close();
-}
-
-// Excluir uma vaga
+// Função para excluir vaga
 if (isset($_GET['excluir_vaga'])) {
     $vaga_id = intval($_GET['excluir_vaga']);
+    // Excluir a vaga do banco de dados
     $stmt = $conn->prepare("DELETE FROM vagas WHERE id = ?");
     $stmt->bind_param("i", $vaga_id);
     $stmt->execute();
+    $stmt->close();
+    
+    // Redirecionar para a mesma página para refletir as alterações
+    header("Location: admin_dashboard.php");
+    exit;
+}
+
+// Adicionar vagas em lote
+if (isset($_POST['add_vagas'])) {
+    $inicio_vaga = intval($_POST['inicio_vaga']);
+    $fim_vaga = intval($_POST['fim_vaga']);
+
+    // Preparar o statement para adicionar as vagas
+    $stmt = $conn->prepare("INSERT INTO vagas (numero, status) VALUES (?, 'disponivel')");
+
+    for ($numero_vaga = $inicio_vaga; $numero_vaga <= $fim_vaga; $numero_vaga++) {
+        $stmt->bind_param("i", $numero_vaga);
+        $stmt->execute();
+    }
     $stmt->close();
 }
 
 // Consulta para obter as vagas e os usuários
 $sql = "SELECT v.id, v.numero, v.status, u.nome AS usuario_nome 
         FROM vagas v 
-        LEFT JOIN usuarios u ON v.usuario_id = u.id";
+        LEFT JOIN veiculos veic ON v.veiculo_id = veic.id
+        LEFT JOIN usuarios u ON veic.usuario_id = u.id";
 $result = $conn->query($sql);
 ?>
 
@@ -71,23 +82,9 @@ $result = $conn->query($sql);
                     <th>Ações</th>
                 </tr>
                 <?php 
-                // Garante que existam 20 vagas
-                for ($i = 1; $i <= 20; $i++): 
-                    // Verifica se a vaga existe na base de dados
-                    $vaga = null;
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            if ($row['numero'] == $i) {
-                                $vaga = $row;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    // Se a vaga não existir, cria uma vaga vazia
-                    if ($vaga === null) {
-                        $vaga = ['id' => null, 'numero' => $i, 'status' => 'disponivel', 'usuario_nome' => null];
-                    }
+                // Mostrar vagas do banco de dados
+                if ($result && $result->num_rows > 0) {
+                    while ($vaga = $result->fetch_assoc()) {
                 ?>
                     <tr>
                         <td><?php echo $vaga['numero']; ?></td>
@@ -101,13 +98,21 @@ $result = $conn->query($sql);
                             <?php endif; ?>
                         </td>
                     </tr>
-                <?php endfor; ?>
+                <?php 
+                    }
+                } else {
+                    echo "<tr><td colspan='4'>Nenhuma vaga encontrada.</td></tr>";
+                }
+                ?>
             </table>
 
-            <h3>Adicionar Nova Vaga</h3>
+            <h3>Adicionar Vagas em Lote</h3>
             <form action="" method="POST">
-                <input type="number" name="numero_vaga" placeholder="Número da Vaga" required>
-                <button type="submit" name="add_vaga">Adicionar Vaga</button>
+                <label for="inicio_vaga">Número inicial:</label>
+                <input type="number" name="inicio_vaga" required>
+                <label for="fim_vaga">Número final:</label>
+                <input type="number" name="fim_vaga" required>
+                <button type="submit" name="add_vagas">Adicionar Vagas</button>
             </form>
         </section>
     </main>
