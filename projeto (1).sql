@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Tempo de geração: 28/10/2024 às 14:21
+-- Host: 127.0.0.1:3306
+-- Tempo de geração: 10/11/2024 às 01:24
 -- Versão do servidor: 10.4.32-MariaDB
--- Versão do PHP: 8.2.12
+-- Versão do PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,20 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `projeto`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `reservas`
+--
+
+CREATE TABLE `reservas` (
+  `id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
+  `vaga_id` int(11) NOT NULL,
+  `data_reserva` datetime DEFAULT current_timestamp(),
+  `status` enum('reservado','cancelado','ocupado') DEFAULT 'reservado'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -43,8 +57,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha`, `tipo`, `data_cadastro`, `telefone`, `foto_perfil`) VALUES
-(1, 'Vitor Machado Silva', 'v@aluno.com', '$2y$10$h9.WDXS1lcpUrTzqBlWZmOkjXDBatDrnAwamx0pbVNiZMZClGSZNK', 'aluno', '2024-10-28 12:46:19', '48999206551', 'donwloads/banco.png'),
-(2, 'gabriel', 'g@gmail.com', '$2y$10$jFQ42T64nmQ.qnn/.OZ2gOw8fvoO4aI7WHzN4TYnQ/l5qZq8fD6Om', 'administrador', '2024-10-28 13:33:29', NULL, NULL);
+(1, 'Carlos', 'carlos@gmail.com', '$2y$10$Rbrrdomp6l81EWsArq50IeD2M2SYdufMETNCgvqiorzpxNqF2Sqta', 'administrador', '2024-11-10 00:48:51', NULL, NULL),
+(2, 'Vitor Machado', 'vitor@admin.com', '$2y$10$besWdmw8Mi.nycjsvEX4P.poTBz.E1wUc/ZBk3/hAJ6YQBqB1Xfs2', 'administrador', '2024-11-10 00:50:32', NULL, NULL),
+(3, 'vitor', 'vitor@aluno.com', '$2y$10$oKHwczgCjoTlBxhi9jkuSenslsPtjWv9XUyTNXUbH1Czry05gTp56', 'aluno', '2024-11-10 01:12:14', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -58,6 +73,23 @@ CREATE TABLE `vagas` (
   `status` enum('disponivel','ocupada') NOT NULL DEFAULT 'disponivel',
   `veiculo_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `vagas`
+--
+
+INSERT INTO `vagas` (`id`, `numero`, `status`, `veiculo_id`) VALUES
+(2, 21, 'disponivel', NULL),
+(9, 1, 'disponivel', NULL),
+(10, 2, 'disponivel', NULL),
+(11, 3, 'disponivel', NULL),
+(12, 4, 'disponivel', NULL),
+(13, 5, 'disponivel', NULL),
+(14, 6, 'disponivel', NULL),
+(15, 7, 'disponivel', NULL),
+(16, 8, 'disponivel', NULL),
+(17, 9, 'disponivel', NULL),
+(18, 10, 'disponivel', NULL);
 
 -- --------------------------------------------------------
 
@@ -79,12 +111,20 @@ CREATE TABLE `veiculos` (
 --
 
 INSERT INTO `veiculos` (`id`, `usuario_id`, `placa`, `marca`, `cor`, `tipo`) VALUES
-(1, 1, '12', 'toyota', 'branco', 'carro'),
-(2, 1, '12', 'toyota', 'branco', 'carro');
+(1, 3, '123', '123', '123', 'carro'),
+(2, 3, '123', '123', '123', 'carro');
 
 --
 -- Índices para tabelas despejadas
 --
+
+--
+-- Índices de tabela `reservas`
+--
+ALTER TABLE `reservas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`),
+  ADD KEY `vaga_id` (`vaga_id`);
 
 --
 -- Índices de tabela `usuarios`
@@ -111,16 +151,22 @@ ALTER TABLE `veiculos`
 --
 
 --
+-- AUTO_INCREMENT de tabela `reservas`
+--
+ALTER TABLE `reservas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `vagas`
 --
 ALTER TABLE `vagas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de tabela `veiculos`
@@ -131,6 +177,13 @@ ALTER TABLE `veiculos`
 --
 -- Restrições para tabelas despejadas
 --
+
+--
+-- Restrições para tabelas `reservas`
+--
+ALTER TABLE `reservas`
+  ADD CONSTRAINT `reservas_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `reservas_ibfk_2` FOREIGN KEY (`vaga_id`) REFERENCES `vagas` (`id`);
 
 --
 -- Restrições para tabelas `vagas`
