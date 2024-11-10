@@ -110,6 +110,7 @@ $result = $conn->query($sql);
             <form action="" method="POST">
                 <label for="inicio_vaga">Número inicial:</label>
                 <input type="number" name="inicio_vaga" required>
+                <br>
                 <label for="fim_vaga">Número final:</label>
                 <input type="number" name="fim_vaga" required>
                 <button type="submit" name="add_vagas">Adicionar Vagas</button>
