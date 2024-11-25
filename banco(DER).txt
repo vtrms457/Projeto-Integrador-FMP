@@ -1,0 +1,28 @@
+usuarios → veiculos (1:N): Cada usuário pode ter vários veículos.
+
+Relacionado através da chave estrangeira usuario_id na tabela veiculos.
+veiculos → vagas (1:1): Cada veículo pode ocupar no máximo uma vaga.
+
+Relacionado através da chave estrangeira veiculo_id na tabela vagas.
+usuarios → reservas (1:N): Cada usuário pode fazer várias reservas.
+
+Relacionado através da chave estrangeira usuario_id na tabela reservas.
+vagas → reservas (1:N): Cada vaga pode ter várias reservas ao longo do tempo, mas uma única reserva ativa por vez.
+
+Relacionado através da chave estrangeira vaga_id na tabela reservas.
+
+
+
+
+  +------------------+        +------------------+         +------------------+          +------------------+
+  |     usuarios    |        |    veiculos      |         |     vagas        |          |    reservas      |
+  +------------------+        +------------------+         +------------------+          +------------------+
+  | id               |<-------| id               |         | id               |<---------| id               |
+  | nome             |        | usuario_id (FK)  |         | numero           |          | usuario_id (FK)  |
+  | email            |        | placa            |         | status           |          | vaga_id (FK)     |
+  | senha            |        | marca            |         | veiculo_id (FK)  |          | data_reserva     |
+  | tipo             |        | cor              |         +------------------+          | status           |
+  | data_cadastro    |        | tipo (carro/moto)|                                       +------------------+
+  | telefone         |        +------------------+
+  | foto_perfil      |
+  +------------------+
